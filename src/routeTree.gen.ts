@@ -10,33 +10,79 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AssistanceRouteImport } from './routes/assistance'
+import { Route as IncidentsRouteImport } from './routes/incidents'
+import { Route as SauvegardesRouteImport } from './routes/sauvegardes'
+import { Route as ServicesRouteImport } from './routes/services'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AssistanceRoute = AssistanceRouteImport.update({
+  id: '/assistance',
+  path: '/assistance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IncidentsRoute = IncidentsRouteImport.update({
+  id: '/incidents',
+  path: '/incidents',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SauvegardesRoute = SauvegardesRouteImport.update({
+  id: '/sauvegardes',
+  path: '/sauvegardes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesRoute = ServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/assistance': typeof AssistanceRoute
+  '/incidents': typeof IncidentsRoute
+  '/sauvegardes': typeof SauvegardesRoute
+  '/services': typeof ServicesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/assistance': typeof AssistanceRoute
+  '/incidents': typeof IncidentsRoute
+  '/sauvegardes': typeof SauvegardesRoute
+  '/services': typeof ServicesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/assistance': typeof AssistanceRoute
+  '/incidents': typeof IncidentsRoute
+  '/sauvegardes': typeof SauvegardesRoute
+  '/services': typeof ServicesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/assistance' | '/incidents' | '/sauvegardes' | '/services'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/assistance' | '/incidents' | '/sauvegardes' | '/services'
+  id:
+    | '__root__'
+    | '/'
+    | '/assistance'
+    | '/incidents'
+    | '/sauvegardes'
+    | '/services'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AssistanceRoute: typeof AssistanceRoute
+  IncidentsRoute: typeof IncidentsRoute
+  SauvegardesRoute: typeof SauvegardesRoute
+  ServicesRoute: typeof ServicesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +94,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/assistance': {
+      id: '/assistance'
+      path: '/assistance'
+      fullPath: '/assistance'
+      preLoaderRoute: typeof AssistanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/incidents': {
+      id: '/incidents'
+      path: '/incidents'
+      fullPath: '/incidents'
+      preLoaderRoute: typeof IncidentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sauvegardes': {
+      id: '/sauvegardes'
+      path: '/sauvegardes'
+      fullPath: '/sauvegardes'
+      preLoaderRoute: typeof SauvegardesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services': {
+      id: '/services'
+      path: '/services'
+      fullPath: '/services'
+      preLoaderRoute: typeof ServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AssistanceRoute: AssistanceRoute,
+  IncidentsRoute: IncidentsRoute,
+  SauvegardesRoute: SauvegardesRoute,
+  ServicesRoute: ServicesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

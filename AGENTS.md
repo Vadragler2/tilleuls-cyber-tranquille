@@ -28,3 +28,9 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+
+- Demo state lives in a pure reducer (`src/lib/demo-state.ts`) persisted to sessionStorage by `DemoProvider`; the prototype must stay offline — no backend, auth, or external calls — because it is a fictional demo.
+- The assistant goes through the `AssistantProvider` interface (`src/lib/assistant.ts`); scripted replies are the active provider and must be labelled as simulated, so a real AI can be swapped in later server-side without UI changes.
+- Recovery-step rules (order, human validation before activation) are enforced in the reducer and covered by `src/test/demo-rules.test.ts`.
