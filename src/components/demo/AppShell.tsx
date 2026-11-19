@@ -61,12 +61,12 @@ function ResetButton() {
           <AlertDialogTitle>Réinitialiser la démonstration ?</AlertDialogTitle>
           <AlertDialogDescription>
             L'incident simulé, les étapes de reprise, les priorités, les tests simulés, les tickets
-            fictifs et la conversation seront effacés. L'application revient à son état normal.
+            fictifs, la conversation, les contacts et les exercices locaux seront effacés. L'application revient à son état normal.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Annuler</AlertDialogCancel>
-          <AlertDialogAction onClick={() => dispatch({ type: "RESET" })}>
+          <AlertDialogAction onClick={() => { try { window.sessionStorage.removeItem("municipal-cyber-kit-demo"); window.localStorage.removeItem("mck-plan-urgence-demo-v1"); } catch { /* stockage bloqué : réinitialisation de la session uniquement */ } dispatch({ type: "RESET" }); window.location.reload(); }}>
             Réinitialiser
           </AlertDialogAction>
         </AlertDialogFooter>
@@ -99,9 +99,10 @@ export function LimitsDialog({ trigger }: { trigger: ReactNode }) {
           <div>
             <h3 className="font-semibold">Données et sobriété</h3>
             <p className="mt-1 text-muted-foreground">
-              Aucune donnée n'est collectée. L'état de la démo reste dans cet onglet du navigateur
-              et s'efface à sa fermeture ou à la réinitialisation. Interface légère, sans
-              animation superflue, utilisable au clavier.
+              Aucune donnée saisie n'est envoyée à un serveur. Les incidents et tickets restent dans
+              la session de l'onglet. Les contacts et exercices du kit d'urgence sont conservés
+              localement dans ce navigateur jusqu'à leur réinitialisation. Interface légère,
+              sans animation superflue, utilisable au clavier.
             </p>
           </div>
           <div>
