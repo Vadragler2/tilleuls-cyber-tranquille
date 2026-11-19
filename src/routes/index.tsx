@@ -25,7 +25,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Vue d'ensemble fictive de la continuité d'activité de la Mairie des Tilleuls : sauvegardes, services et incidents.",
+          "Vue d'ensemble fictive de la continuité d'activité d'une commune fictive : sauvegardes, services et incidents.",
       },
       { property: "og:title", content: "Tableau de bord — Municipal Cyber Kit (démo)" },
       {
