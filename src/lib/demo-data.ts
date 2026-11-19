@@ -1,7 +1,7 @@
 // Données d'exemple 100 % fictives — aucune connexion à un système réel.
 
 export const COMMUNE = {
-  name: "Mairie des Tilleuls",
+  name: "Commune de démonstration",
   population: "2 500 habitants",
   profile: "Agent municipal",
 } as const;
