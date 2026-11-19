@@ -114,7 +114,9 @@ export function simulatedReply(input: string, ctx: AssistantContext): AssistantR
 
   if (/mail|courriel|message|hameconnage|phishing|frauduleu|piece jointe|lien/.test(q)) {
     return {
-      text: "Bon réflexe de vous méfier. Tant que rien n'a été ouvert, le risque reste limité." + incidentNote,
+      text:
+        "Bon réflexe de vous méfier. Tant que rien n'a été ouvert, le risque reste limité." +
+        incidentNote,
       steps: [
         "N'ouvrez pas la pièce jointe et ne cliquez sur aucun lien.",
         "Ne répondez pas à l'expéditeur.",

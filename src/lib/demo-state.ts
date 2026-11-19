@@ -39,6 +39,7 @@ export interface DemoState {
     steps: StepId[];
     validatedBy: string | null;
     lastClosedAt: string | null;
+    activatedServices?: ServiceId[];
   };
   /** Tests de restauration simulés pendant la session, par sauvegarde. */
   restoreTests: Partial<Record<BackupId, string>>;
@@ -85,6 +86,12 @@ export type DemoAction =
   | { type: "CHAT_ADD"; message: Omit<ChatMessage, "id"> }
   | { type: "REQUEST_TECHNICIAN"; value: boolean };
 
+function getEligibleRecoveryServices(priorities: DemoState["priorities"]): ServiceId[] {
+  return SERVICES.filter((service) => service.backupReady && priorities[service.id] === 1).map(
+    (service) => service.id,
+  );
+}
+
 /** Raison pour laquelle une étape ne peut pas encore être accomplie, ou null si elle le peut. */
 export function getStepBlocker(state: DemoState, step: StepId): string | null {
   const { incident } = state;
@@ -95,6 +102,8 @@ export function getStepBlocker(state: DemoState, step: StepId): string | null {
       return "La reprise ne peut pas être activée tant que l'intégrité d'une sauvegarde n'est pas vérifiée.";
     if (!incident.steps.includes("valider"))
       return "La reprise ne peut pas être activée sans validation par un responsable ou un technicien.";
+    if (getEligibleRecoveryServices(state.priorities).length === 0)
+      return "Aucun service compatible n'est en priorité 1. Vérifiez les priorités dans Services.";
   }
   const index = STEP_ORDER.indexOf(step);
   const missing = STEP_ORDER.slice(0, index).find((s) => !incident.steps.includes(s));
@@ -111,8 +120,17 @@ export function canCompleteStep(state: DemoState, step: StepId): boolean {
 
 export function demoReducer(state: DemoState, action: DemoAction): DemoState {
   switch (action.type) {
-    case "HYDRATE":
-      return action.state?.version === 1 ? { ...initialDemoState, ...action.state } : state;
+    case "HYDRATE": {
+      if (action.state?.version !== 1) return state;
+      const restored = { ...initialDemoState, ...action.state };
+      if (restored.incident.status === "secours" && !restored.incident.activatedServices) {
+        restored.incident = {
+          ...restored.incident,
+          activatedServices: getEligibleRecoveryServices(restored.priorities),
+        };
+      }
+      return restored;
+    }
     case "RESET":
       return initialDemoState;
     case "START_INCIDENT":
@@ -131,13 +149,24 @@ export function demoReducer(state: DemoState, action: DemoAction): DemoState {
       if (!canCompleteStep(state, action.step)) return state;
       if (action.step === "valider" && !action.validatedBy) return state;
       const steps = [...state.incident.steps, action.step];
+      if (action.step === "activer") {
+        return {
+          ...state,
+          incident: {
+            ...state.incident,
+            steps,
+            status: "secours",
+            activatedServices: getEligibleRecoveryServices(state.priorities),
+          },
+        };
+      }
       return {
         ...state,
         incident: {
           ...state.incident,
           steps,
-          validatedBy: action.step === "valider" ? action.validatedBy! : state.incident.validatedBy,
-          status: action.step === "activer" ? "secours" : "active",
+          validatedBy:
+            action.step === "valider" ? (action.validatedBy ?? null) : state.incident.validatedBy,
         },
       };
     }
@@ -192,13 +221,18 @@ export function getBackupStats(state: DemoState) {
   return { total: view.length, available: view.length, toVerify };
 }
 
-export type ServiceRuntime = "pret" | "a-etudier" | "indisponible" | "secours" | "hors-secours";
+export type ServiceRuntime =
+  "pret" | "a-etudier" | "indisponible" | "secours" | "hors-secours" | "non-active";
 
 export function getServicesView(state: DemoState) {
+  const activated = state.incident.activatedServices ?? [];
   return SERVICES.map((s, index) => {
     let runtime: ServiceRuntime = s.backupReady ? "pret" : "a-etudier";
     if (state.incident.status === "active") runtime = "indisponible";
-    if (state.incident.status === "secours") runtime = s.backupReady ? "secours" : "hors-secours";
+    if (state.incident.status === "secours") {
+      if (activated.includes(s.id)) runtime = "secours";
+      else runtime = s.backupReady ? "non-active" : "hors-secours";
+    }
     return { ...s, index, priority: state.priorities[s.id], runtime };
   }).sort((a, b) => a.priority - b.priority || a.index - b.index);
 }

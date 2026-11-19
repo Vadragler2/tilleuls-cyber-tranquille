@@ -61,11 +61,20 @@ interface TicketDraft {
   description: string;
 }
 
-const EMPTY_DRAFT: TicketDraft = { subject: "", category: "Autre", priority: "Normale", description: "" };
+const EMPTY_DRAFT: TicketDraft = {
+  subject: "",
+  category: "Autre",
+  priority: "Normale",
+  description: "",
+};
 
 const ROLE_CARDS: { icon: LucideIcon; title: string; text: string }[] = [
   { icon: Compass, title: "Oriente", text: "Premiers réflexes et fiches réflexes" },
-  { icon: HelpCircle, title: "Aide à qualifier", text: "Une ou deux questions simples sur l'incident" },
+  {
+    icon: HelpCircle,
+    title: "Aide à qualifier",
+    text: "Une ou deux questions simples sur l'incident",
+  },
   { icon: UserRound, title: "Passe la main", text: "Ticket et contact d'un technicien" },
 ];
 
@@ -129,13 +138,7 @@ function ReplyCard({
   );
 }
 
-function TicketDialog({
-  draft,
-  onClose,
-}: {
-  draft: TicketDraft | null;
-  onClose: () => void;
-}) {
+function TicketDialog({ draft, onClose }: { draft: TicketDraft | null; onClose: () => void }) {
   const { state, dispatch } = useDemo();
   const [form, setForm] = useState<TicketDraft>(EMPTY_DRAFT);
   const [created, setCreated] = useState<Ticket | null>(null);
@@ -388,13 +391,21 @@ function AssistancePage() {
             )}
             {state.chat.map((m) =>
               m.role === "user" ? (
-                <div key={m.id} className="ml-auto max-w-[85%] rounded-lg border bg-muted px-4 py-3 text-sm">
+                <div
+                  key={m.id}
+                  className="ml-auto max-w-[85%] rounded-lg border bg-muted px-4 py-3 text-sm"
+                >
                   <span className="sr-only">Vous : </span>
                   {m.text}
                 </div>
               ) : (
-                <div key={m.id} className="max-w-[92%] rounded-lg border border-primary/20 bg-info-soft px-4 py-3">
-                  <p className="mb-2 text-xs font-bold text-info-strong">Assistant (réponse simulée)</p>
+                <div
+                  key={m.id}
+                  className="max-w-[92%] rounded-lg border border-primary/20 bg-info-soft px-4 py-3"
+                >
+                  <p className="mb-2 text-xs font-bold text-info-strong">
+                    Assistant (réponse simulée)
+                  </p>
                   {m.reply ? (
                     <ReplyCard
                       reply={m.reply}

@@ -43,9 +43,16 @@ const RUNTIME: Record<ServiceRuntime, { tone: Tone; label: string }> = {
   indisponible: { tone: "danger", label: "Indisponible (incident simulé)" },
   secours: { tone: "success", label: "Mode secours (simulation)" },
   "hors-secours": { tone: "warning", label: "Hors secours — compatibilité à vérifier" },
+  "non-active": { tone: "warning", label: "Hors secours — non activé lors de la reprise" },
 };
 
-function BackupAccessDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
+function BackupAccessDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (o: boolean) => void;
+}) {
   const { state, dispatch } = useDemo();
   const services = getServicesView(state);
   const [done, setDone] = useState(false);
@@ -129,7 +136,10 @@ function ServicesPage() {
 
   return (
     <>
-      <PageHeader title="Services essentiels" subtitle="Choisir l'ordre de reprise des outils municipaux" />
+      <PageHeader
+        title="Services essentiels"
+        subtitle="Choisir l'ordre de reprise des outils municipaux"
+      />
 
       <Note tone="info" className="mb-6">
         Une priorité élevée ne garantit pas un basculement instantané : la capacité de reprise de
@@ -157,7 +167,10 @@ function ServicesPage() {
                       <select
                         value={draft[s.id]}
                         onChange={(e) =>
-                          setDraft({ ...draft, [s.id as ServiceId]: Number(e.target.value) as Priority })
+                          setDraft({
+                            ...draft,
+                            [s.id as ServiceId]: Number(e.target.value) as Priority,
+                          })
                         }
                         className="h-10 rounded-md border border-input bg-card px-2"
                       >
@@ -198,7 +211,9 @@ function ServicesPage() {
               Annuler
             </Button>
             <p className="w-full text-xs text-muted-foreground">
-              Modification enregistrée dans ce prototype uniquement.
+              {state.incident.status === "secours"
+                ? "Les nouvelles priorités seront utilisées lors de la prochaine activation."
+                : "Modification enregistrée dans ce prototype uniquement."}
             </p>
           </>
         ) : (

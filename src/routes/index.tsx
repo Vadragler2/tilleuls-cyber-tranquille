@@ -41,23 +41,50 @@ export const Route = createFileRoute("/")({
 
 type QuickPath = "/sauvegardes" | "/services" | "/incidents";
 
-const QUICK: { to: QuickPath; label: string; hint: string; icon: LucideIcon; danger?: boolean }[] = [
-  { to: "/sauvegardes", label: "Voir les sauvegardes", hint: "Copies et tests de reprise", icon: DatabaseBackup },
-  { to: "/services", label: "Consulter les services", hint: "Priorité des applications", icon: Building2 },
-  {
-    to: "/incidents",
-    label: "Simuler une cyberattaque",
-    hint: "Parcours de crise fictif",
-    icon: ShieldAlert,
-    danger: true,
-  },
-];
+const QUICK: { to: QuickPath; label: string; hint: string; icon: LucideIcon; danger?: boolean }[] =
+  [
+    {
+      to: "/sauvegardes",
+      label: "Voir les sauvegardes",
+      hint: "Copies et tests de reprise",
+      icon: DatabaseBackup,
+    },
+    {
+      to: "/services",
+      label: "Consulter les services",
+      hint: "Priorité des applications",
+      icon: Building2,
+    },
+    {
+      to: "/incidents",
+      label: "Simuler une cyberattaque",
+      hint: "Parcours de crise fictif",
+      icon: ShieldAlert,
+      danger: true,
+    },
+  ];
 
 const PRINCIPLES: { icon: LucideIcon; title: string; text: string }[] = [
-  { icon: Split, title: "Isolation par commune", text: "Les données de chaque mairie restent strictement séparées." },
-  { icon: Lock, title: "Chiffrement", text: "Copies chiffrées, illisibles sans la clé de la commune." },
-  { icon: KeyRound, title: "Copies séparées", text: "Sauvegardes isolées des systèmes locaux de la mairie." },
-  { icon: Layers, title: "Ressources mutualisées", text: "Infrastructure partagée pour réduire coûts et empreinte." },
+  {
+    icon: Split,
+    title: "Isolation par commune",
+    text: "Les données de chaque mairie restent strictement séparées.",
+  },
+  {
+    icon: Lock,
+    title: "Chiffrement",
+    text: "Copies chiffrées, illisibles sans la clé de la commune.",
+  },
+  {
+    icon: KeyRound,
+    title: "Copies séparées",
+    text: "Sauvegardes isolées des systèmes locaux de la mairie.",
+  },
+  {
+    icon: Layers,
+    title: "Ressources mutualisées",
+    text: "Infrastructure partagée pour réduire coûts et empreinte.",
+  },
 ];
 
 const PITCH: { to: "/" | "/sauvegardes" | "/incidents" | "/assistance"; label: string }[] = [
@@ -76,7 +103,7 @@ function Dashboard() {
   const prep = getPreparation(state);
   const status = state.incident.status;
 
-  const ready = services.filter((s) => s.runtime === "pret").length;
+  const ready = services.filter((s) => s.runtime === "pret" && s.priority === 1).length;
   const inSecours = services.filter((s) => s.runtime === "secours").length;
 
   return (
@@ -86,11 +113,16 @@ function Dashboard() {
         subtitle="Vue d'ensemble de la continuité d'activité de la commune"
       />
 
-      <Link to="/incidents" className="mb-6 flex flex-wrap items-center gap-3 rounded-xl border-2 border-destructive/40 bg-destructive-soft p-5 text-destructive-strong hover:border-destructive">
+      <Link
+        to="/incidents"
+        className="mb-6 flex flex-wrap items-center gap-3 rounded-xl border-2 border-destructive/40 bg-destructive-soft p-5 text-destructive-strong hover:border-destructive"
+      >
         <ShieldAlert className="size-8 shrink-0" aria-hidden="true" />
         <span className="min-w-0 flex-1">
           <span className="block text-xl font-bold">Mode crise — kit d'urgence</span>
-          <span className="block text-sm">Contacts, premiers réflexes et exercice guidé. Sans installation.</span>
+          <span className="block text-sm">
+            Contacts, premiers réflexes et exercice guidé. Sans installation.
+          </span>
         </span>
         <span className="inline-flex items-center items-center gap-1 rounded-md bg-card px-3 py-2 text-sm font-semibold">
           Ouvrir <ChevronRight className="size-4" aria-hidden="true" />
@@ -114,7 +146,7 @@ function Dashboard() {
         )}
         {status === "secours" && (
           <Note tone="success" icon={<ShieldCheck />}>
-            <strong>Services essentiels disponibles en mode secours (simulation).</strong>{" "}
+            <strong>Reprise en mode secours (simulation).</strong>{" "}
             <Link to="/incidents" className="font-semibold underline underline-offset-4">
               Clôturer l'incident simulé
             </Link>
@@ -146,8 +178,8 @@ function Dashboard() {
             status === "active"
               ? "Services interrompus"
               : status === "secours"
-                ? "En mode secours · 1 hors secours"
-                : `${services.length - ready} logiciel à préparer`
+                ? `En mode secours · ${services.length - inSecours} hors secours`
+                : "Services compatibles de priorité 1"
           }
           tone={status === "active" ? "danger" : "warning"}
         />

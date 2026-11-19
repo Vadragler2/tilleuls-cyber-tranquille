@@ -47,6 +47,45 @@ describe("Procédure d'incident simulée", () => {
     expect(s.incident.status).toBe("secours");
   });
 
+  it("active uniquement les services compatibles en priorité 1 au moment de la reprise", () => {
+    const ready: DemoState = {
+      ...activeWith(["signaler", "isoler", "verifier", "valider"]),
+      priorities: { "etat-civil": 1, fichiers: 3, comptabilite: 1 },
+    };
+    const recovered = demoReducer(ready, { type: "COMPLETE_STEP", step: "activer" });
+    expect(recovered.incident.activatedServices).toEqual(["etat-civil"]);
+    const newPriorities = demoReducer(recovered, {
+      type: "SET_PRIORITIES",
+      priorities: { "etat-civil": 2, fichiers: 1, comptabilite: 1 },
+    });
+    const services = getServicesView(newPriorities);
+    expect(services.find(({ id }) => id === "etat-civil")?.runtime).toBe("secours");
+    expect(services.find(({ id }) => id === "fichiers")?.runtime).toBe("non-active");
+    expect(services.find(({ id }) => id === "comptabilite")?.runtime).toBe("hors-secours");
+  });
+
+  it("bloque l'activation en l'absence de service compatible en priorité 1", () => {
+    const ready = demoReducer(activeWith(["signaler", "isoler", "verifier", "valider"]), {
+      type: "SET_PRIORITIES",
+      priorities: { "etat-civil": 2, fichiers: 3, comptabilite: 1 },
+    });
+    expect(canCompleteStep(ready, "activer")).toBe(false);
+    expect(demoReducer(ready, { type: "COMPLETE_STEP", step: "activer" })).toBe(ready);
+  });
+
+  it("reconstitue les services activés pour une session antérieure", () => {
+    const legacy: DemoState = {
+      ...initialDemoState,
+      priorities: { "etat-civil": 1, fichiers: 2, comptabilite: 1 },
+      incident: { ...initialDemoState.incident, status: "secours" },
+    };
+    const restored = demoReducer(initialDemoState, { type: "HYDRATE", state: legacy });
+    expect(restored.incident.activatedServices).toEqual(["etat-civil"]);
+    expect(getServicesView(restored).filter(({ runtime }) => runtime === "secours")).toHaveLength(
+      1,
+    );
+  });
+
   it("la réinitialisation remet la démo à l'état normal", () => {
     let s = demoReducer(initialDemoState, { type: "START_INCIDENT", at });
     s = demoReducer(s, { type: "RESET" });

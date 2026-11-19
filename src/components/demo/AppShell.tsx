@@ -11,17 +11,6 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -35,6 +24,7 @@ import { COMMUNE } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 
 import { useDemo } from "./DemoProvider";
+import { ResetDemoDialog } from "./ResetDemoDialog";
 
 type NavPath = "/" | "/sauvegardes" | "/services" | "/incidents" | "/assistance";
 
@@ -45,35 +35,6 @@ const NAV: { to: NavPath; label: string; icon: LucideIcon }[] = [
   { to: "/incidents", label: "Mode crise", icon: ShieldAlert },
   { to: "/assistance", label: "Assistance IA", icon: MessageSquareText },
 ];
-
-function ResetButton() {
-  const { dispatch } = useDemo();
-  return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button variant="onNavy" size="sm">
-          <RotateCcw aria-hidden="true" />
-          Réinitialiser la démo
-        </Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Réinitialiser la démonstration ?</AlertDialogTitle>
-          <AlertDialogDescription>
-            L'incident simulé, les étapes de reprise, les priorités, les tests simulés, les tickets
-            fictifs, la conversation, les contacts et les exercices locaux seront effacés. L'application revient à son état normal.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Annuler</AlertDialogCancel>
-          <AlertDialogAction onClick={() => { try { window.sessionStorage.removeItem("municipal-cyber-kit-demo"); window.localStorage.removeItem("mck-plan-urgence-demo-v1"); } catch { /* stockage bloqué : réinitialisation de la session uniquement */ } dispatch({ type: "RESET" }); window.location.reload(); }}>
-            Réinitialiser
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-}
 
 export function LimitsDialog({ trigger }: { trigger: ReactNode }) {
   return (
@@ -89,20 +50,26 @@ export function LimitsDialog({ trigger }: { trigger: ReactNode }) {
         </DialogHeader>
         <div className="space-y-4 text-sm">
           <ul className="list-disc space-y-1.5 pl-5">
-            <li>Aucun serveur, cloud, annuaire, outil de sauvegarde ou logiciel municipal n'est connecté.</li>
+            <li>
+              Aucun serveur, cloud, annuaire, outil de sauvegarde ou logiciel municipal n'est
+              connecté.
+            </li>
             <li>Aucune sauvegarde n'est réellement créée, contrôlée ou restaurée.</li>
             <li>Aucun bouton n'envoie de commande ni ne modifie un système extérieur.</li>
             <li>L'assistant donne des réponses pré-écrites : aucune IA n'est active.</li>
             <li>Les tickets et contacts techniciens sont fictifs : rien n'est envoyé.</li>
-            <li>La reprise des logiciels métiers dépend de leur compatibilité : aucun basculement universel n'est promis.</li>
+            <li>
+              La reprise des logiciels métiers dépend de leur compatibilité : aucun basculement
+              universel n'est promis.
+            </li>
           </ul>
           <div>
             <h3 className="font-semibold">Données et sobriété</h3>
             <p className="mt-1 text-muted-foreground">
               Aucune donnée saisie n'est envoyée à un serveur. Les incidents et tickets restent dans
               la session de l'onglet. Les contacts et exercices du kit d'urgence sont conservés
-              localement dans ce navigateur jusqu'à leur réinitialisation. Interface légère,
-              sans animation superflue, utilisable au clavier.
+              localement dans ce navigateur jusqu'à leur réinitialisation. La version publiée peut
+              émettre des événements d'usage propres à l'hébergeur.
             </p>
           </div>
           <div>
@@ -159,7 +126,14 @@ export function AppShell({ children }: { children: ReactNode }) {
                 </button>
               }
             />
-            <ResetButton />
+            <ResetDemoDialog
+              trigger={
+                <Button variant="onNavy" size="sm">
+                  <RotateCcw aria-hidden="true" />
+                  Réinitialiser la démo
+                </Button>
+              }
+            />
           </div>
         </div>
       </header>
@@ -178,7 +152,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <span className="font-semibold">
               {state.incident.status === "active"
                 ? "Incident simulé en cours : suspicion de rançongiciel"
-                : "Services essentiels disponibles en mode secours (simulation)"}
+                : "Reprise en mode secours (simulation)"}
             </span>
             {pathname !== "/incidents" && (
               <Link to="/incidents" className="font-semibold underline underline-offset-4">
@@ -207,7 +181,10 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <item.icon className="size-4" aria-hidden="true" />
                 {item.label}
                 {item.to === "/incidents" && state.incident.status === "active" && (
-                  <span className="size-2 rounded-full bg-destructive" aria-label="incident actif" />
+                  <span
+                    className="size-2 rounded-full bg-destructive"
+                    aria-label="incident actif"
+                  />
                 )}
               </Link>
             </li>
@@ -264,7 +241,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           <span>Prototype DEI · aucun système réel connecté · données fictives</span>
           <LimitsDialog
             trigger={
-              <button type="button" className="font-semibold text-primary underline underline-offset-4">
+              <button
+                type="button"
+                className="font-semibold text-primary underline underline-offset-4"
+              >
                 Limites de la simulation
               </button>
             }

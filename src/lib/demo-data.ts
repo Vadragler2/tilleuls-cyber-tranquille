@@ -86,7 +86,8 @@ export const SERVICES: MunicipalService[] = [
     description: "Actes, demandes et pièces administratives",
     defaultPriority: 1,
     backupReady: true,
-    compatibility: "Logiciel métier compatible avec la reprise envisagée (hypothèse de démonstration).",
+    compatibility:
+      "Logiciel métier compatible avec la reprise envisagée (hypothèse de démonstration).",
   },
   {
     id: "fichiers",
@@ -114,13 +115,15 @@ export const INCIDENT_STEPS: { id: StepId; title: string; short: string; descrip
     id: "signaler",
     title: "Signaler l'incident",
     short: "Signaler",
-    description: "Prévenir la secrétaire de mairie et le référent informatique. Noter l'heure et ce qui a été observé.",
+    description:
+      "Prévenir la secrétaire de mairie et le référent informatique. Noter l'heure et ce qui a été observé.",
   },
   {
     id: "isoler",
     title: "Isoler les systèmes touchés",
     short: "Isoler",
-    description: "Débrancher le poste concerné du réseau (câble et wifi) sans l'éteindre, pour ne pas effacer d'indices.",
+    description:
+      "Débrancher le poste concerné du réseau (câble et wifi) sans l'éteindre, pour ne pas effacer d'indices.",
   },
   {
     id: "verifier",
@@ -132,13 +135,15 @@ export const INCIDENT_STEPS: { id: StepId; title: string; short: string; descrip
     id: "valider",
     title: "Faire valider la reprise",
     short: "Valider",
-    description: "Un responsable ou un technicien confirme que la reprise peut être lancée. Aucune reprise automatique.",
+    description:
+      "Un responsable ou un technicien confirme que la reprise peut être lancée. Aucune reprise automatique.",
   },
   {
     id: "activer",
     title: "Activer les services prioritaires de secours",
     short: "Activer",
-    description: "Ouvrir l'accès de secours aux services de priorité 1, dans l'ordre défini par la commune.",
+    description:
+      "Ouvrir l'accès de secours aux services de priorité 1, dans l'ordre défini par la commune.",
   },
 ];
 

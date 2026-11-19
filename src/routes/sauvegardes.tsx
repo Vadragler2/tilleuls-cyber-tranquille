@@ -46,7 +46,13 @@ const RUN_STEPS = [
 
 type BackupView = ReturnType<typeof getBackupsView>[number];
 
-function BackupDetail({ backup: selected, onClose }: { backup: BackupView | null; onClose: () => void }) {
+function BackupDetail({
+  backup: selected,
+  onClose,
+}: {
+  backup: BackupView | null;
+  onClose: () => void;
+}) {
   // Garde le contenu affiché pendant la fermeture de la fenêtre.
   const [backup, setBackup] = useState<BackupView | null>(selected);
   useEffect(() => {
@@ -219,7 +225,9 @@ function RestoreTestDialog({
               </Button>
             </>
           )}
-          {phase === "running" && <p className="text-sm text-muted-foreground">Simulation en cours…</p>}
+          {phase === "running" && (
+            <p className="text-sm text-muted-foreground">Simulation en cours…</p>
+          )}
           {phase === "done" && <Button onClick={() => onOpenChange(false)}>Fermer</Button>}
         </DialogFooter>
       </DialogContent>
@@ -250,7 +258,12 @@ function BackupsPage() {
       )}
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard label="Copies disponibles" value={String(stats.available)} hint="Dans cet exemple" tone="success" />
+        <StatCard
+          label="Copies disponibles"
+          value={String(stats.available)}
+          hint="Dans cet exemple"
+          tone="success"
+        />
         <StatCard
           label="À vérifier"
           value={String(stats.toVerify.length)}
@@ -275,22 +288,34 @@ function BackupsPage() {
           </Button>
         }
       >
-        <div className="overflow-x-auto">
+        <div className="relative overflow-x-auto">
           <table className="w-full min-w-[640px] text-left text-sm">
             <caption className="sr-only">Liste fictive des sauvegardes de la commune</caption>
             <thead>
               <tr className="border-b bg-muted text-xs text-muted-foreground">
-                <th scope="col" className="px-3 py-2.5 font-semibold">Élément</th>
-                <th scope="col" className="px-3 py-2.5 font-semibold">Dernière copie</th>
-                <th scope="col" className="px-3 py-2.5 font-semibold">Vérification de la copie</th>
-                <th scope="col" className="px-3 py-2.5 font-semibold">Restauration testée</th>
-                <th scope="col" className="px-3 py-2.5 font-semibold">Action</th>
+                <th scope="col" className="px-3 py-2.5 font-semibold">
+                  Élément
+                </th>
+                <th scope="col" className="px-3 py-2.5 font-semibold">
+                  Dernière copie
+                </th>
+                <th scope="col" className="px-3 py-2.5 font-semibold">
+                  Vérification de la copie
+                </th>
+                <th scope="col" className="px-3 py-2.5 font-semibold">
+                  Restauration testée
+                </th>
+                <th scope="col" className="px-3 py-2.5 font-semibold">
+                  Action
+                </th>
               </tr>
             </thead>
             <tbody>
               {backups.map((b) => (
                 <tr key={b.id} className="border-b last:border-0">
-                  <th scope="row" className="px-3 py-3.5 font-semibold">{b.label}</th>
+                  <th scope="row" className="px-3 py-3.5 font-semibold">
+                    {b.label}
+                  </th>
                   <td className="px-3 py-3.5">{b.lastCopy}</td>
                   <td className="px-3 py-3.5">
                     {b.verified ? (

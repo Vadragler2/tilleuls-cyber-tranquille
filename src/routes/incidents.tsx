@@ -12,6 +12,7 @@ import { useState } from "react";
 
 import { nowLabel, useDemo } from "@/components/demo/DemoProvider";
 import { EmergencyKit } from "@/components/demo/EmergencyKit";
+import { ResetDemoDialog } from "@/components/demo/ResetDemoDialog";
 import { Note, PageHeader, Panel, PitchNext, StatusBadge } from "@/components/demo/ui";
 import {
   AlertDialog,
@@ -99,7 +100,9 @@ function StartIncident() {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Annuler</AlertDialogCancel>
-              <AlertDialogAction onClick={() => dispatch({ type: "START_INCIDENT", at: nowLabel() })}>
+              <AlertDialogAction
+                onClick={() => dispatch({ type: "START_INCIDENT", at: nowLabel() })}
+              >
                 Démarrer la simulation
               </AlertDialogAction>
             </AlertDialogFooter>
@@ -119,7 +122,8 @@ function ValidateForm() {
       className="mt-3 space-y-3 rounded-lg border bg-muted p-3"
       onSubmit={(e) => {
         e.preventDefault();
-        if (role && confirmed) dispatch({ type: "COMPLETE_STEP", step: "valider", validatedBy: role });
+        if (role && confirmed)
+          dispatch({ type: "COMPLETE_STEP", step: "valider", validatedBy: role });
       }}
     >
       <label className="block text-sm">
@@ -160,7 +164,10 @@ function Procedure() {
   const current = INCIDENT_STEPS.find((s) => !done.includes(s.id))?.id;
 
   return (
-    <Panel title="Parcours de reprise proposé" description="Chaque étape se marque comme accomplie dans la démonstration">
+    <Panel
+      title="Parcours de reprise proposé"
+      description="Chaque étape se marque comme accomplie dans la démonstration"
+    >
       <ol className="space-y-3">
         {INCIDENT_STEPS.map((step, i) => {
           const isDone = done.includes(step.id);
@@ -232,7 +239,9 @@ function Procedure() {
                     </div>
                   )}
                   {!isDone && !isCurrent && step.id !== "activer" && (
-                    <p className="mt-2 text-xs text-muted-foreground">En attente de l'étape précédente.</p>
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      En attente de l'étape précédente.
+                    </p>
                   )}
                 </div>
               </div>
@@ -254,11 +263,13 @@ function SecoursResult() {
     <Panel>
       <Note tone="success" icon={<ShieldCheck />}>
         <p className="text-base font-bold">
-          Services essentiels disponibles en mode secours (simulation)
+          {services.some((service) => service.runtime === "secours")
+            ? "Services essentiels disponibles en mode secours (simulation)"
+            : "Aucun service prioritaire disponible en mode secours (simulation)"}
         </p>
         <p className="mt-1">
-          Reprise validée par {state.incident.validatedBy}. Les services de priorité 1 sont
-          accessibles depuis l'environnement de secours fictif.
+          Reprise validée par {state.incident.validatedBy}. Le secours concerne les services
+          compatibles qui étaient en priorité 1 lors de l'activation.
         </p>
       </Note>
       <ul className="mt-4 divide-y rounded-lg border text-sm">
@@ -271,7 +282,11 @@ function SecoursResult() {
             {s.runtime === "secours" ? (
               <StatusBadge tone="success">Disponible en secours</StatusBadge>
             ) : (
-              <StatusBadge tone="warning">Hors secours — compatibilité à vérifier</StatusBadge>
+              <StatusBadge tone="warning">
+                {s.backupReady
+                  ? "Hors secours — non activé lors de la reprise"
+                  : "Hors secours — compatibilité à vérifier"}
+              </StatusBadge>
             )}
           </li>
         ))}
@@ -281,10 +296,14 @@ function SecoursResult() {
           <CircleCheck aria-hidden="true" />
           Clôturer l'incident simulé
         </Button>
-        <Button variant="outline" onClick={() => dispatch({ type: "RESET" })}>
-          <RotateCcw aria-hidden="true" />
-          Réinitialiser la démonstration
-        </Button>
+        <ResetDemoDialog
+          trigger={
+            <Button variant="outline">
+              <RotateCcw aria-hidden="true" />
+              Réinitialiser la démonstration
+            </Button>
+          }
+        />
       </div>
     </Panel>
   );
@@ -309,7 +328,9 @@ function IncidentsPage() {
             ? "Simulation de crise et procédure de reprise"
             : "Scénario : suspicion de rançongiciel sur un poste administratif"
         }
-        aside={status !== "none" ? <StatusBadge tone="danger">Incident simulé</StatusBadge> : undefined}
+        aside={
+          status !== "none" ? <StatusBadge tone="danger">Incident simulé</StatusBadge> : undefined
+        }
       />
 
       <EmergencyKit />
@@ -325,7 +346,9 @@ function IncidentsPage() {
             >
               <TriangleAlert className="mt-0.5 size-6 shrink-0" aria-hidden="true" />
               <div>
-                <p className="text-lg font-bold">Alerte fictive : des fichiers sont devenus inaccessibles</p>
+                <p className="text-lg font-bold">
+                  Alerte fictive : des fichiers sont devenus inaccessibles
+                </p>
                 <p className="mt-1 text-sm">
                   Fichiers municipaux renommés et illisibles sur un poste administratif. Démarré :{" "}
                   {state.incident.startedAt}. Aucune action technique réelle n'est exécutée dans
