@@ -42,7 +42,7 @@ const NAV: { to: NavPath; label: string; icon: LucideIcon }[] = [
   { to: "/", label: "Tableau de bord", icon: LayoutDashboard },
   { to: "/sauvegardes", label: "Sauvegardes", icon: DatabaseBackup },
   { to: "/services", label: "Services", icon: Building2 },
-  { to: "/incidents", label: "Incidents", icon: ShieldAlert },
+  { to: "/incidents", label: "Mode crise", icon: ShieldAlert },
   { to: "/assistance", label: "Assistance IA", icon: MessageSquareText },
 ];
 
