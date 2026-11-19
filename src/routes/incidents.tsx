@@ -11,6 +11,7 @@ import {
 import { useState } from "react";
 
 import { nowLabel, useDemo } from "@/components/demo/DemoProvider";
+import { EmergencyKit } from "@/components/demo/EmergencyKit";
 import { Note, PageHeader, Panel, PitchNext, StatusBadge } from "@/components/demo/ui";
 import {
   AlertDialog,
@@ -310,6 +311,8 @@ function IncidentsPage() {
         }
         aside={status !== "none" ? <StatusBadge tone="danger">Incident simulé</StatusBadge> : undefined}
       />
+
+      <EmergencyKit />
 
       {status === "none" && <StartIncident />}
 
