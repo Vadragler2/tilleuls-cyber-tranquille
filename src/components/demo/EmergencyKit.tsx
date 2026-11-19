@@ -121,7 +121,7 @@ export function EmergencyKit() {
     if (!memo.exercice) return;
     const lignes = [
       "Municipal Cyber Kit - compte rendu de demonstration",
-      "Commune : Mairie des Tilleuls (fictive)",
+      "Commune : exemple fictif",
       "Date : " + dateFr(memo.exercice.date),
       "Score : " + memo.exercice.score + " / " + QUESTIONS.length,
       "Scenario : fichiers devenus illisibles.",
