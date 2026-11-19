@@ -86,6 +86,17 @@ function Dashboard() {
         subtitle="Vue d'ensemble de la continuité d'activité de la commune"
       />
 
+      <Link to="/incidents" className="mb-6 flex flex-wrap items-center gap-3 rounded-xl border-2 border-destructive/40 bg-destructive-soft p-5 text-destructive-strong hover:border-destructive">
+        <ShieldAlert className="size-8 shrink-0" aria-hidden="true" />
+        <span className="min-w-0 flex-1">
+          <span className="block text-xl font-bold">Mode crise — kit d'urgence</span>
+          <span className="block text-sm">Contacts, premiers réflexes et exercice guidé. Sans installation.</span>
+        </span>
+        <span className="inline-flex items-center items-center gap-1 rounded-md bg-card px-3 py-2 text-sm font-semibold">
+          Ouvrir <ChevronRight className="size-4" aria-hidden="true" />
+        </span>
+      </Link>
+
       <div className="mb-6">
         {status === "none" && (
           <Note tone="success" icon={<ShieldCheck />}>
